@@ -1,0 +1,36 @@
+{
+  "employees": [
+    {
+      "id": 1,
+      "name": "Jessica Younker"
+    },
+    {
+      "id": 2,
+      "name": "Jordan Nelson"
+    }
+  ],
+  "stores": [
+    {
+      "id": 1,
+      "name": "East Huntington"
+    },
+    {
+      "id": 2,
+      "name": "West Huntington"
+    }
+  ],
+  "candy": [
+    {
+      "id": 2,
+      "name": "Snickers"
+    },
+    {
+      "id": 3,
+      "name": "Reeses"
+    },
+    {
+      "id": 4,
+      "name": "Starburst"
+    }
+  ]
+}
