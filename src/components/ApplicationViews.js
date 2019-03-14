@@ -1,4 +1,4 @@
-import { Route } from 'react-router-dom'
+import { Route, Redirect } from 'react-router-dom'
 import React, { Component } from "react"
 import CandyList from './candy/CandyList'
 import StoreList from './stores/StoreList'
@@ -10,6 +10,8 @@ import EmployeeDetail from './employees/EmployeeDetail'
 import CandyDetail from './candy/CandyDetail'
 import CandyForm from './candy/CandyForm'
 import EmployeeForm from './employees/EmployeeForm'
+import Login from './authentication/Login'
+
 
 
 class ApplicationViews extends Component {
@@ -20,7 +22,7 @@ class ApplicationViews extends Component {
         candy: [],
         // candyType: []
     }
-
+    isAuthenticated = () => sessionStorage.getItem("credentials") !== null
     deleteCandy = id => {
         return fetch(`http://localhost:5002/candy/${id}`, {
             method: "DELETE"
@@ -82,11 +84,17 @@ class ApplicationViews extends Component {
     render() {
         return (
             <div className="container-div">
+                <Route path="/login" component={Login} />
                 <Route exact path="/" render={(props) => {
                     return <StoreList {...props} stores={this.state.stores} />
                 }} />
-                <Route exact path="/employees" render={(props) => {
-                    return <EmployeeList {...props} employees={this.state.employees} />
+                <Route exact path="/employees" render={props => {
+                    if (this.isAuthenticated()) {
+                        return <EmployeeList
+                            employees={this.state.employees} />
+                    } else {
+                        return <Redirect to="/login" />
+                    }
                 }} />
                 <Route path="/employees/new" render={(props) => {
                     return <EmployeeForm {...props}
