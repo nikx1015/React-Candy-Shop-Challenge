@@ -8,6 +8,8 @@ import employeeAPIManager from '../modules/EmployeeManager'
 import locationAPIManager from '../modules/LocationManager'
 import EmployeeDetail from './employees/EmployeeDetail'
 import CandyDetail from './candy/CandyDetail'
+import CandyForm from './candy/CandyForm'
+import EmployeeForm from './employees/EmployeeForm'
 
 
 class ApplicationViews extends Component {
@@ -15,71 +17,98 @@ class ApplicationViews extends Component {
     state = {
         stores: [],
         employees: [],
-        candy: []
-        // candyType: this.candyTypeArray
+        candy: [],
+        // candyType: []
     }
 
     deleteCandy = id => {
         return fetch(`http://localhost:5002/candy/${id}`, {
             method: "DELETE"
         })
-        .then(e => e.json())
-        .then(() => fetch(`http://localhost:5002/candy`))
-        .then(e => e.json())
-        .then(candy => this.setState({
-            candy: candy
-        })
-      )
+            .then(e => e.json())
+            .then(() => fetch(`http://localhost:5002/candy`))
+            .then(e => e.json())
+            .then(candy => this.setState({
+                candy: candy
+            })
+            )
     }
+    addCandy = candy =>
+        candyAPIManager.post(candy)
+            .then(() => candyAPIManager.getAll())
+            .then(candy =>
+                this.setState({
+                    candy: candy
+                })
+            );
+    addEmployee = employeeObject =>
+        employeeAPIManager.postEmployee(employeeObject)
+            .then(() => employeeAPIManager.getAll()).then(employees =>
+                this.setState({
+                    employees: employees
+                })
+            );
+
     deleteEmployee = id => {
         return fetch(`http://localhost:5002/employees/${id}`, {
             method: "DELETE"
         })
-        .then(e => e.json())
-        .then(() => fetch(`http://localhost:5002/employees`))
-        .then(e => e.json())
-        .then(employee => this.setState({
-            employee: employee
-        })
-      )
+            .then(e => e.json())
+            .then(() => fetch(`http://localhost:5002/employees`))
+            .then(e => e.json())
+            .then(employee => this.setState({
+                employee: employee
+            })
+            )
     }
     componentDidMount() {
-            const newState = {};
-            return employeeAPIManager.getAll()
-              .then(parsedEmployees => {
+        const newState = {};
+        return employeeAPIManager.getAll()
+            .then(parsedEmployees => {
                 newState.employees = parsedEmployees;
                 return locationAPIManager.getAll()
-              })
-              .then(parsedStores => {
+            })
+            .then(parsedStores => {
                 newState.stores = parsedStores;
                 return candyAPIManager.getAll();
-              })
-              .then(parsedCandy => {
+            })
+            .then(parsedCandy => {
                 newState.candy = parsedCandy;
                 this.setState(newState);
             })
-        }
+    }
 
 
     render() {
         return (
             <div className="container-div">
                 <Route exact path="/" render={(props) => {
-                    return <StoreList stores={this.state.stores} />
+                    return <StoreList {...props} stores={this.state.stores} />
                 }} />
-                    <Route exact path="/employees" render={(props) => {
-                    return <EmployeeList  employees={this.state.employees} />
+                <Route exact path="/employees" render={(props) => {
+                    return <EmployeeList {...props} employees={this.state.employees} />
                 }} />
-                      <Route path="/employees/:employeeId(\d+)" render={(props) => {
-    return <EmployeeDetail {...props} deleteEmployee={this.deleteEmployee} employees={this.state.employees} />
-}} />
+                <Route path="/employees/new" render={(props) => {
+                    return <EmployeeForm {...props}
+                        addEmployee={this.addEmployee}
+                        employees={this.state.employees} />
+                }} />
+                <Route path="/employees/:employeeId(\d+)" render={(props) => {
+                    return <EmployeeDetail {...props} deleteEmployee={this.deleteEmployee} employees={this.state.employees} />
+                }} />
                 <Route exact path="/candy" render={(props) => {
-                    return <CandyList candy={this.state.candy} />
+                    return <CandyList {...props}
+                        candy={this.state.candy} />
                 }} />
                 <Route path="/candy/:candyId(\d+)" render={(props) => {
-    return <CandyDetail {...props} deleteCandy={this.deleteCandy} candy={this.state.candy} />
-}} />
-                </div>
+                    return <CandyDetail {...props} deleteCandy={this.deleteCandy} candy={this.state.candy} />
+                }} />
+                <Route path="/candy/new" render={(props) => {
+                    return <CandyForm {...props}
+                        addCandy={this.addCandy}
+                        candy={this.state.candy} />
+                }} />
+            </div>
         )
     }
 }

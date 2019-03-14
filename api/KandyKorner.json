@@ -7,6 +7,12 @@
     {
       "id": 2,
       "name": "Jordan Nelson"
+    },
+    {
+      "name": "Loki",
+      "status": "Full Time",
+      "employeeId": null,
+      "id": 3
     }
   ],
   "stores": [
